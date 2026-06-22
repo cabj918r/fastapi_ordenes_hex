@@ -1,0 +1,65 @@
+name: Continuous Integration - API Ordenes
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: programador_data
+          POSTGRES_PASSWORD: tu_password_seguro
+          POSTGRES_DB: thelook_ecommerce
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout del código
+      uses: actions/checkout@v4
+
+    - name: Configurar Python 3.14
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.14'
+
+    - name: Instalar Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: 2.0.1  # <-- Regresamos a la versión oficial y estable 2.0.1
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+
+    - name: Forzar actualización de lock en el servidor
+      run: poetry lock --no-cache
+
+    - name: Instalar todas las dependencias (Incluyendo Dependency Groups)
+      run: poetry install --no-interaction --all-groups
+
+    - name: Ejecutar Linter (Ruff)
+      run: poetry run ruff check app/ tests/
+
+    - name: Ejecutar Verificador de Tipos (MyPy)
+      run: poetry run mypy app/
+
+    - name: Ejecutar migraciones (Alembic)
+      env:
+        DATABASE_URL: postgresql://programador_data:tu_password_seguro@localhost:5432/thelook_ecommerce
+      run: |
+        poetry run alembic upgrade head
+
+    - name: Ejecutar Suite de Pruebas (PyTest)
+      env:
+        DATABASE_URL: postgresql://programador_data:tu_password_seguro@localhost:5432/thelook_ecommerce
+      run: poetry run pytest -v
