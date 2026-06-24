@@ -1,6 +1,8 @@
 #app/application/pricing/pricing_strategy.py
 from abc import ABC, abstractmethod
+
 from app.domain.entities.order import Order
+
 
 class PricingStrategy(ABC):
     """Contrato para estrategias de cálculo de precio."""
