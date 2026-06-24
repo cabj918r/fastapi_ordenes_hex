@@ -32,6 +32,7 @@ def upgrade() -> None:
         sa.Column("shipped_at", sa.DateTime(), nullable=True),
         sa.Column("delivered_at", sa.DateTime(), nullable=True),
         sa.Column("num_of_item", sa.Integer(), nullable=False),
+        sa.Column("total_amount", sa.Float(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(op.f("ix_orders_id"), "orders", ["id"], unique=False)

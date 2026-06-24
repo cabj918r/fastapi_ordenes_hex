@@ -64,7 +64,8 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.execute("TRUNCATE TABLE api_users CASCADE;")
+    op.drop_index(op.f("ix_api_users_username"), table_name="api_users")
+    op.execute("DROP TABLE api_users CASCADE;")
 
 
 # ### end Alembic commands ###

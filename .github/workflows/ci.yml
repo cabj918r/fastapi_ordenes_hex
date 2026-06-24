@@ -53,6 +53,9 @@ jobs:
     - name: Ejecutar Verificador de Tipos (MyPy)
       run: poetry run mypy app/
 
+    - name: Ejecutar pre-commit
+      run: poetry run pre-commit run --all-files
+
     - name: Ejecutar migraciones (Alembic)
       env:
         DATABASE_URL: postgresql://programador_data:tu_password_seguro@localhost:5432/thelook_ecommerce

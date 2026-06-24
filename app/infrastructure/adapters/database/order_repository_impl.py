@@ -58,6 +58,7 @@ class OrderRepositoryImpl(OrderRepository):
             shipped_at=order_orm.shipped_at,
             delivered_at=order_orm.delivered_at,
             returned_at=order_orm.returned_at,
+            total_amount=order_orm.total_amount,
             items=domain_items,
         )
 
@@ -70,6 +71,7 @@ class OrderRepositoryImpl(OrderRepository):
             gender=order.gender.value if order.gender else None,
             status=order.status.value,
             num_of_item=order.num_of_item,
+            total_amount=order.total_amount,
             created_at=order.created_at,
         )
 

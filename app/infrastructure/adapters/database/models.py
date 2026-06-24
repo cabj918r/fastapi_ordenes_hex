@@ -48,6 +48,7 @@ class OrderORM(Base):
     num_of_item: Mapped[int] = mapped_column(
         Integer, default=1, nullable=False
     )  # Cantidad total de artículos en la orden
+    total_amount: Mapped[float | None] = mapped_column(Float, nullable=True)
 
     # Relación uno-a-muchos con las líneas de detalle
     items: Mapped[list["OrderItemORM"]] = relationship(

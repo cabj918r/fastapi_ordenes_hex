@@ -50,6 +50,7 @@ class OrderResponse(BaseModel):
     gender: str
     status: str
     num_of_item: int
+    total_amount: float | None = None
     created_at: datetime
 
     # Las fechas de ciclo de vida son opcionales al crear una orden

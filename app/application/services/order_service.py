@@ -1,6 +1,8 @@
 # app/application/services/order_service.py
 from typing import Any
 
+from app.application.pricing.pricing_strategy import PricingStrategy
+from app.application.pricing.strategies import BasePriceStrategy
 from app.domain.entities.order import Order, OrderItem
 from app.domain.repositories.order_repository import OrderRepository
 from app.domain.value_objects.gender import Gender
@@ -12,9 +14,14 @@ class OrderService:
     Solo depende de las abstracciones del Dominio (Puertos), nunca de la BD real.
     """
 
-    def __init__(self, order_repository: OrderRepository):
+    def __init__(
+        self,
+        order_repository: OrderRepository,
+        pricing_strategy: PricingStrategy | None = None,
+    ):
         # Inyección de dependencias: Recibimos el puerto abstracto
         self.order_repository = order_repository
+        self.pricing_strategy = pricing_strategy or BasePriceStrategy()
 
     def create_order(
         self, user_id: int, gender_str: str, items_data: list[dict[str, Any]]
@@ -36,6 +43,9 @@ class OrderService:
 
         # 3. Instanciamos la Entidad Raíz (Order)
         domain_order = Order(user_id=user_id, gender=domain_gender, items=domain_items)
+
+        total = self.pricing_strategy.calculate(domain_order)
+        domain_order.total_amount = total
 
         # 4. Persistimos usando el puerto abstracto. El adaptador se encargará del SQL.
         return self.order_repository.create(domain_order)

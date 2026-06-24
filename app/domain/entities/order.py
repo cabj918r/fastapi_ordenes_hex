@@ -33,6 +33,7 @@ class Order:
     delivered_at: datetime | None = None
     returned_at: datetime | None = None
     num_of_item: int = field(init=False)
+    total_amount: float | None = None
 
     def __post_init__(self) -> None:
         # La entidad calcula el total de ítems basándose en la lista
